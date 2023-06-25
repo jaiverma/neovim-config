@@ -15,7 +15,6 @@ return require('packer').startup(function(use)
   use 'wbthomason/packer.nvim'
   -- My plugins here
   use 'nvim-tree/nvim-tree.lua'
-  use 'nvim-tree/nvim-web-devicons'
 
   -- Automatically set up your configuration after cloning packer.nvim
   -- Put this at the end after all plugins
