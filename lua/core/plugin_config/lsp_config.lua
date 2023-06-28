@@ -16,3 +16,16 @@ require('lspconfig').ocamllsp.setup {
   on_attach = on_attach,
   capabilities = capabilities
 }
+
+require('flutter-tools').setup {
+  lsp = {
+    on_attach = on_attach
+  }
+}
+-- Enable format-on-save using LSP
+vim.api.nvim_create_autocmd("BufWritePre", {
+  buffer = buffer,
+  callback = function()
+    vim.lsp.buf.format { async = false }
+  end
+})
