@@ -22,6 +22,12 @@ require('lspconfig').clangd.setup {
   capabilities = capabilities
 }
 
+require('lspconfig').sourcekit.setup {
+  cmd = {'/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/sourcekit-lsp'},
+  on_attach = on_attach,
+  capabilities = capabilities
+}
+
 require('flutter-tools').setup {
   lsp = {
     on_attach = on_attach
