@@ -1,9 +1,45 @@
 local ts_utils = require("nvim-treesitter.ts_utils")
 
+local buf = nil
+local win = nil
+
+function render(data)
+  -- clear the buffer if it exists
+  if buf then
+    vim.api.nvim_buf_set_lines(buf, 0, vim.api.nvim_buf_line_count(buf), false, {})
+  end
+
+  if #data == 0 then
+    return
+  end
+
+  if not buf then
+    buf = vim.api.nvim_create_buf(false, true)
+  end
+
+  local ui = vim.api.nvim_list_uis()[1]
+  local opts = {
+    relative = "editor",
+    width = 30,
+    height = math.floor(ui.height / 2),
+    row = 0,
+    col = ui.width,
+    anchor = "NE",
+    focusable = false,
+    style = "minimal"
+  }
+
+  if not win then
+    win = vim.api.nvim_open_win(buf, false, opts)
+  end
+
+  vim.api.nvim_buf_set_lines(buf, 0, #data, false, data)
+end
+
 function get_ifdef()
   local cur_node = ts_utils.get_node_at_cursor()
   if not cur_node then
-    return ""
+    return {}
   end
 
   local is_defined = false
@@ -31,7 +67,7 @@ function get_ifdef()
   end
 
   if not expr then
-    return ""
+    return {}
   end
 
   -- if we have an preproc_else, we want to get the preproc_ifdef statement
@@ -60,7 +96,7 @@ function get_ifdef()
   end
 
   if not ifdef_node then
-    return ""
+    return {}
   end
 
   local start_row, start_col, end_row, end_col = ifdef_node:range()
@@ -69,15 +105,15 @@ function get_ifdef()
   if start_row ~= end_row then
     -- handle multiline ifdef statement
     if #lines == 0 then
-      return ""
+      return {}
     end
     -- fix first line to start from start_col
     -- and last line to end at end_col
-    lines[1] = string.sub(lines[1], start_col)
+    lines[1] = string.sub(lines[1], start_col + 1)
     lines[#lines] = string.sub(lines[#lines], 1, end_col)
   else
     -- we can only have 1 line in this condition
-    lines[1] = string.sub(lines[1], start_col, end_col)
+    lines[1] = string.sub(lines[1], start_col + 1, end_col)
   end
 
   local ifdef_name = table.concat(lines, "\n")
@@ -90,9 +126,17 @@ function get_ifdef()
   end
 
   print(string.format("%s: %s", ifdef_name, label))
-  return x
+  return {ifdef_name, label}
 end
 
 vim.api.nvim_create_user_command("Ifdef", function(cmd)
-  get_ifdef()
+  local ifdefs = get_ifdef()
+  render(ifdefs)
 end, { desc = "View ifdef name" })
+
+vim.api.nvim_create_autocmd({"CursorMoved"}, {
+  pattern = {"*.c", "*.h", "*.cpp", "*.hpp", "*.cc"},
+  callback = function(x)
+    local ifdefs = get_ifdef()
+    render(ifdefs)
+  end})
