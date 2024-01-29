@@ -36,6 +36,7 @@ function render(data)
   vim.api.nvim_buf_set_lines(buf, 0, #data, false, data)
 end
 
+-- works from current cursor position, and not on whole file contents
 function get_ifdef()
   local cur_node = ts_utils.get_node_at_cursor()
   if not cur_node then
@@ -45,6 +46,7 @@ function get_ifdef()
   local is_defined = false
   local expr = cur_node
 
+  -- handles ifdef
   while expr do
     -- check for preproc_else first, since that will be a child
     -- of the preproc_ifdef
@@ -70,6 +72,7 @@ function get_ifdef()
     return {}
   end
 
+  -- handle else
   -- if we have an preproc_else, we want to get the preproc_ifdef statement
   -- and have a flag that identified whether or not that macro is defined or not
   if expr:type() == "preproc_else" then
@@ -80,6 +83,14 @@ function get_ifdef()
       end
       expr = expr:parent()
     end
+  end
+
+  -- we need to check for this again, since the #else could either correspond to:
+  --   - #ifdef
+  --   - #if, #elif
+  -- The above loop only handles the former
+  if not expr then
+    return {}
   end
 
   -- print(expr:type())
@@ -125,8 +136,8 @@ function get_ifdef()
     label = "no"
   end
 
-  print(string.format("%s: %s", ifdef_name, label))
-  return {ifdef_name, label}
+  local ifdef = string.format("%s: %s", ifdef_name, label)
+  return {ifdef}
 end
 
 vim.api.nvim_create_user_command("Ifdef", function(cmd)
