@@ -58,6 +58,30 @@ function get_tsnode_ident(ifdef_node)
   return ifdef_name
 end
 
+-- we only need to check children here, because for elif/else cases
+-- we already are checking the parents in `get_ifdef`
+function get_siblings(node)
+  -- if the node is ifdef/if then we want to traverse the children
+  local siblings = {}
+  if node:type() == "preproc_if" or node:type() == "preproc_ifdef" or node:type() == "preproc_elif" then
+    local queue = {node}
+    while #queue > 0 do
+      local top = queue[1]
+      table.remove(queue, 1)
+      local n = top:child_count()
+      for idx = 1, n - 1 do
+        local child = top:child(idx)
+        if child:type() == "preproc_elif" then
+          siblings[#siblings + 1] = parse_if(child, "if")
+          queue[#queue + 1] = child
+        end
+      end
+    end
+  end
+
+  return siblings
+end
+
 -- mode can either be 'if' or 'else'
 -- for if/ifdef/ifndef when we encounter an ifdef node,
 -- we are referring to the node itself, so 'defined' should
@@ -148,6 +172,11 @@ function get_ifdef()
 
   if not expr then
     return {}
+  end
+
+  local siblings = get_siblings(expr)
+  for _, node in ipairs(siblings) do
+    idents[node["ident"]] = not node["defined"]
   end
 
   -- handle else/elif
