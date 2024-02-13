@@ -9,7 +9,8 @@ require("nvim-treesitter.configs").setup {
     "dart",
     "scala",
     "json",
-    "javascript"
+    "javascript",
+    "rust"
   },
 
   sync_install = false,

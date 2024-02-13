@@ -34,10 +34,22 @@ require('flutter-tools').setup {
   }
 }
 
+require('lspconfig').rust_analyzer.setup{
+  on_attach = on_attach,
+  capabilities = capabilities,
+  settings = {
+    ['rust-analyzer'] = {
+      diagnostics = {
+        enable = false;
+      }
+    }
+  }
+}
+
 -- Enable format-on-save using LSP
--- vim.api.nvim_create_autocmd("BufWritePre", {
---   buffer = buffer,
---   callback = function()
---     vim.lsp.buf.format { async = false }
---   end
--- })
+vim.api.nvim_create_autocmd("BufWritePre", {
+  buffer = buffer,
+  callback = function()
+    vim.lsp.buf.format { async = false }
+  end
+})
