@@ -1,1 +1,1 @@
-require("kanagawa").load("wave")
+require("kanagawa").load("dragon")

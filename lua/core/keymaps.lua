@@ -8,3 +8,4 @@ vim.opt.shiftround = true
 vim.opt.expandtab = true
 vim.opt.hlsearch = true
 vim.opt.number = true
+vim.opt.colorcolumn = "120"
