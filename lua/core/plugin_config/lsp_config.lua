@@ -27,7 +27,7 @@ require('lspconfig').clangd.setup {
 }
 
 require('lspconfig').sourcekit.setup {
-  cmd = {'/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/sourcekit-lsp'},
+  cmd = { '/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/sourcekit-lsp' },
   on_attach = on_attach,
   capabilities = capabilities
 }
@@ -38,16 +38,21 @@ require('flutter-tools').setup {
   }
 }
 
-require('lspconfig').rust_analyzer.setup{
+require('lspconfig').rust_analyzer.setup {
   on_attach = on_attach,
   capabilities = capabilities,
   settings = {
     ['rust-analyzer'] = {
       diagnostics = {
-        enable = false;
+        enable = false,
       }
     }
   }
+}
+
+require("lspconfig")["lua_ls"].setup {
+  on_attach = on_attach,
+  capabilities = capabilities
 }
 
 -- Enable format-on-save using LSP
