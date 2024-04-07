@@ -8,6 +8,10 @@ local on_attach = function(_, bufnr)
   vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, {})
   vim.keymap.set('n', 'gr', require('telescope.builtin').lsp_references, {})
   vim.keymap.set('n', 'K', vim.lsp.buf.hover, {})
+  vim.api.nvim_buf_create_user_command(
+    bufnr, "Ff", function()
+      vim.lsp.buf.format { async = false }
+    end, {})
 end
 
 local capabilities = require('cmp_nvim_lsp').default_capabilities()
@@ -47,9 +51,6 @@ require('lspconfig').rust_analyzer.setup{
 }
 
 -- Enable format-on-save using LSP
-vim.api.nvim_create_autocmd("BufWritePre", {
-  buffer = buffer,
-  callback = function()
-    vim.lsp.buf.format { async = false }
-  end
-})
+-- vim.api.nvim_buf_create_user_command(vim.api.nvim_get_current_buf(), "MyCommand", function()
+--     vim.lsp.buf.format { async = false }
+--   end, {})
