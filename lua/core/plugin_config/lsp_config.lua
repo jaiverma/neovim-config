@@ -60,6 +60,11 @@ require("lspconfig")["gopls"].setup {
   capabilities = capabilities
 }
 
+require("lspconfig")["tsserver"].setup {
+  on_attach = on_attach,
+  capabilities = capabilities
+}
+
 -- Enable format-on-save using LSP
 -- vim.api.nvim_buf_create_user_command(vim.api.nvim_get_current_buf(), "MyCommand", function()
 --     vim.lsp.buf.format { async = false }
