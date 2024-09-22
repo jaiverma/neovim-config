@@ -65,6 +65,31 @@ require("lspconfig")["tsserver"].setup {
   capabilities = capabilities
 }
 
+-- ensure you have pyright installed
+-- you can do this by creating a venv
+--      python3 -m venv test
+--      source test/bin/activate
+--      pip install --upgrade pip
+--      pip install pyright
+--      pip install black
+--      pip install ruff
+--
+-- pyright doesn't offer formatting on it's own so we will use:
+-- black + ruff + none-ls
+require("lspconfig")["pyright"].setup {
+  on_attach = on_attach,
+  capabilities = capabilities
+}
+
+local null_ls = require("null-ls")
+
+null_ls.setup {
+  sources = {
+    null_ls.builtins.formatting.black,
+    null_ls.builtins.formatting.ruff
+  }
+}
+
 -- Enable format-on-save using LSP
 -- vim.api.nvim_buf_create_user_command(vim.api.nvim_get_current_buf(), "MyCommand", function()
 --     vim.lsp.buf.format { async = false }

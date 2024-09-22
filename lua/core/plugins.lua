@@ -22,7 +22,8 @@ return require("lazy").setup({
     build = ":TSUpdate"
   },
   {
-    "nvim-telescope/telescope.nvim", tag = "0.1.6",
+    "nvim-telescope/telescope.nvim",
+    tag = "0.1.6",
     dependencies = { "nvim-lua/plenary.nvim" }
   },
   { "rebelot/kanagawa.nvim" },
@@ -48,5 +49,6 @@ return require("lazy").setup({
     config = true
   },
   { "romgrk/barbar.nvim" },
-  { "nvim-treesitter/nvim-treesitter-context" }
+  { "nvim-treesitter/nvim-treesitter-context" },
+  { "nvimtools/none-ls.nvim" }
 })
